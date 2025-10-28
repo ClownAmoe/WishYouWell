@@ -3,7 +3,6 @@ import fs from "fs";
 
 import Card from "./Card.js";
 import connectDB from "./connect.js";
-import mongoose from "mongoose";
 
 const seedCards = async () => {
   await connectDB();
