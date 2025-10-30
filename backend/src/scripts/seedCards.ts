@@ -1,14 +1,14 @@
 import path from "path";
 import fs from "fs";
 
-import Card from "./Card.js";
-import connectDB from "./connect.js";
+import connectDB from "../config/connect.js";
+import Card from "../models/Card.js";
 
 const seedCards = async () => {
   await connectDB();
 
   try {
-    const filePath = path.join(process.cwd(), "src/db", "tarot.json");
+    const filePath = path.join(process.cwd(), "./data", "tarot.json");
     const jsonData = JSON.parse(fs.readFileSync(filePath, "utf-8"));
 
     await Card.deleteMany({});
