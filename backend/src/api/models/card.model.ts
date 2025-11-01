@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
-import { ICard } from "./types/card";
+import { ICard } from "../types/card";
 
-const cardSchema = new Schema<ICard>({
+const CardSchema = new Schema<ICard>({
   type: String,
   name_short: String,
   name: String,
@@ -14,5 +14,5 @@ const cardSchema = new Schema<ICard>({
   img: String,
 });
 
-const Card = model<ICard>("Card", cardSchema);
-export default Card;
+const CardModel = model<ICard>("Card", CardSchema);
+export default CardModel;

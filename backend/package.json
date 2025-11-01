@@ -4,22 +4,29 @@
   "main": "index.js",
   "scripts": {
     "seed": "tsx src/scripts/seedCards.ts",
-    "test": "tsx src/db/test.ts"
+    "dev:api": "tsx watch src/api/server.ts",
+    "dev:w1": "ts-node-dev --respawn --transpile-only src/workers/worker-1.ts",
+    "dev:w2": "ts-node-dev --respawn --transpile-only src/workers/worker-2.ts",
+    "dev:lb": "ts-node-dev --respawn --transpile-only src/load-balancer/index.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "type": "module",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
+    "express": "^5.1.0",
     "mongoose": "^8.19.2"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.5",
     "@types/mongoose": "^5.11.96",
     "@types/node": "^24.9.2",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
-  }
+  },
+  "description": ""
 }
