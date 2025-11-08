@@ -5,9 +5,9 @@
   "scripts": {
     "seed": "tsx src/scripts/seedCards.ts",
     "dev:api": "tsx watch src/api/server.ts",
-    "dev:w1": "ts-node-dev --respawn --transpile-only src/workers/worker-1.ts",
-    "dev:w2": "ts-node-dev --respawn --transpile-only src/workers/worker-2.ts",
-    "dev:lb": "ts-node-dev --respawn --transpile-only src/load-balancer/index.ts"
+    "dev:w1": "tsx watch src/servers/server1.ts",
+    "dev:w2": "tsx watch src/servers/server2.ts",
+    "dev:lb": "tsx watch src/load-balancer/loadBalancer.ts"
   },
   "keywords": [],
   "author": "",
@@ -17,14 +17,17 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "http-proxy": "^1.18.1",
     "mongoose": "^8.19.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.5",
+    "@types/http-proxy": "^1.17.17",
     "@types/mongoose": "^5.11.96",
     "@types/node": "^24.9.2",
     "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   },
