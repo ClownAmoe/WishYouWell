@@ -1,23 +1,19 @@
 import { Request, Response } from "express";
-import { describeWithHF } from "../services/tarot.service";
 import {
   createTask,
   getTask,
   cancelTask,
   getTasks,
 } from "../services/task.service";
-import { TaskDocument } from "../models/task.model";
 
 export async function createTaskController(req: Request, res: Response) {
   const { cards } = req.body;
   if (!Array.isArray(cards) || cards.length === 0)
     return res.status(400).json({ error: "cards required" });
-
   try {
     const task = await createTask(cards);
     console.log("Task created:", task);
-    task.result = (await describeWithHF(cards)).join("\n");
-    await task.save();
+
     res.json({ taskId: task._id });
   } catch (err: any) {
     res.status(429).json({ error: err.message });

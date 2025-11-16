@@ -4,7 +4,7 @@ export interface ITask extends Document {
   cards: string[];
   status: TaskStatus;
   progress: number;
-  result?: string;
+  result?: string[];
   createdAt: Date;
   updatedAt: Date;
 }

@@ -3,6 +3,7 @@ import { ITask } from "../types/task";
 
 export interface TaskDocument extends ITask, Document {
   _id: Types.ObjectId;
+  result: string[];
 }
 
 const taskSchema = new Schema<TaskDocument>(
@@ -14,7 +15,7 @@ const taskSchema = new Schema<TaskDocument>(
       default: "pending",
     },
     progress: { type: Number, default: 0 },
-    result: { type: String, default: "" },
+    result: { type: [String], default: [] },
   },
   { timestamps: true }
 );
