@@ -10,11 +10,20 @@ export async function createTaskController(req: Request, res: Response) {
   const { cards } = req.body;
   if (!Array.isArray(cards) || cards.length === 0)
     return res.status(400).json({ error: "cards required" });
-  try {
-    const task = await createTask(cards);
-    console.log("Task created:", task);
 
-    res.json({ taskId: task._id });
+  try {
+    const user = (req as any).user;
+    if (!user) return res.status(401).json({ error: "Unauthorized" });
+    let workerHeader = req.headers["x-worker-id"];
+    if (!workerHeader) {
+      return res.status(400).json({ error: "Worker ID missing" });
+    }
+
+    const worker = Array.isArray(workerHeader) ? workerHeader[0] : workerHeader;
+
+    const task = await createTask(cards, worker, user._id.toString());
+
+    res.json({ taskId: task._id, worker });
   } catch (err: any) {
     res.status(429).json({ error: err.message });
   }

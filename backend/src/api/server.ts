@@ -3,8 +3,8 @@ import express from "express";
 import cors from "cors";
 import connectDB from "./config/connect";
 
-// імпортуємо роут
 import cardsRouter from "./routes/cards.routes";
+import authRoutes from "./routes/auth.routes";
 
 dotenv.config();
 
@@ -13,6 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/cards", cardsRouter);
+app.use("/auth", authRoutes);
 
 const PORT = process.env.PORT;
 

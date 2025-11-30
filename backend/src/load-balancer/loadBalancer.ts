@@ -10,6 +10,7 @@ const proxy = httpProxy.createProxyServer({});
 const server = http.createServer((req, res) => {
   const targetPort = WORKERS[current];
   current = (current + 1) % WORKERS.length;
+  req.headers["x-worker-id"] = String(targetPort);
   proxy.web(req, res, { target: `http://localhost:${targetPort}` });
 });
 

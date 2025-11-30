@@ -1,34 +1,19 @@
-import { ITask } from "../types/task";
 import TaskModel, { TaskDocument } from "../models/task.model";
+import { ITask } from "../types/task";
+import PQueue from "p-queue";
 
-const MAX_CONCURRENT_TASKS = 3;
-let runningTasks = 0;
-
-export async function createTask(cards: string[]): Promise<TaskDocument> {
-  if (runningTasks >= MAX_CONCURRENT_TASKS)
-    throw new Error("Too many concurrent tasks");
-
-  const task = await TaskModel.create({
-    cards,
-    status: "pending",
-    progress: 0,
-    result: [],
-  });
-  runTask(task._id.toString());
-  return task;
-}
+const queue = new PQueue({ concurrency: 2 });
 
 async function runTask(taskId: string) {
   const task = await TaskModel.findById(taskId);
   if (!task) return;
 
-  task.status = "in_progress";
-  task.progress = 0;
-  task.result = [];
-  await task.save();
-  runningTasks++;
-
   try {
+    task.status = "in_progress";
+    task.progress = 0;
+    task.result = [];
+    await task.save();
+
     const totalCards = task.cards.length;
 
     for (let i = 0; i < totalCards; i++) {
@@ -56,12 +41,33 @@ async function runTask(taskId: string) {
     task.status = "done";
     task.progress = 100;
     await task.save();
+    console.log(`[QUEUE] Task done ${task._id}`);
   } catch (err) {
     task.status = "cancelled";
     await task.save();
-  } finally {
-    runningTasks--;
+    console.log(`[QUEUE] Task cancelled ${task._id}`);
   }
+}
+
+export async function createTask(
+  cards: string[],
+  server: string,
+  userId: string
+): Promise<TaskDocument> {
+  const task = await TaskModel.create({
+    cards,
+    status: "pending",
+    user: userId,
+    progress: 0,
+    result: [],
+    server,
+  });
+
+  console.log(`[QUEUE] Task queued ${task._id}`);
+
+  queue.add(() => runTask(task._id.toString()));
+
+  return task;
 }
 
 export async function getTask(taskId: string): Promise<ITask | null> {
@@ -78,7 +84,6 @@ export async function cancelTask(taskId: string): Promise<boolean> {
     return false;
 
   task.status = "cancelled";
-  runningTasks--;
   await task.save();
   return true;
 }
