@@ -17,11 +17,17 @@ async function runTask(taskId: string) {
     const totalCards = task.cards.length;
 
     for (let i = 0; i < totalCards; i++) {
+      const freshTask = await TaskModel.findById(taskId);
+      if (!freshTask || freshTask.status === "cancelled") {
+        console.log(`[QUEUE] Task cancelled during execution ${task._id}`);
+        return;
+      }
+
       const cardName = task.cards[i];
       const card = await import("../models/card.model").then((m) =>
         m.default.findOne({ name: cardName })
       );
-      const desc = card ? card.desc : `No description for ${cardName}`;
+      const desc = card ? card.meaning_up : `No description for ${cardName}`;
       task.result.push(desc);
 
       const startProgress = Math.round((i / totalCards) * 100);
@@ -30,9 +36,16 @@ async function runTask(taskId: string) {
       const stepDelay = 1000;
 
       for (let s = 1; s <= steps; s++) {
+        const freshTask = await TaskModel.findById(taskId);
+        if (!freshTask || freshTask.status === "cancelled") {
+          console.log(`[QUEUE] Task cancelled during progress ${task._id}`);
+          return;
+        }
+
         task.progress =
           startProgress +
           Math.round(((endProgress - startProgress) * s) / steps);
+
         await task.save();
         await new Promise((resolve) => setTimeout(resolve, stepDelay));
       }
